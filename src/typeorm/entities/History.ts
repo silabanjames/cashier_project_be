@@ -13,9 +13,6 @@ export class History {
     @Column()
     quantity: number;
 
-    @Column()
-    price: number;
-
     @ManyToOne(() => Product, (product)=>product.histories)
     product: Product;
 

@@ -1,8 +1,10 @@
-import { Body, Controller, Get, Post, Res } from '@nestjs/common';
+import { Body, Controller, Get, Post, Res, UseGuards } from '@nestjs/common';
 import { ProductService } from 'src/product/service/product/product.service';
 import Response from 'express';
+import { JwtGuard } from 'src/guard/jwt.guard';
 
 @Controller('product')
+@UseGuards(JwtGuard)
 export class ProductController {
     constructor(private readonly productService: ProductService) {}
 

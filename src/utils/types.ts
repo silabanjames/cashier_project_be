@@ -10,7 +10,8 @@ export type SignUpParams = {
 }
 
 export type addToCartParams = {
-    id: string;
+    productId: string;
+    
     quantity: number;
 }
 

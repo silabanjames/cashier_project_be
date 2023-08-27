@@ -54,7 +54,7 @@ export class AuthService {
         return access_token;
     }
 
-    async signUp(userDetails: SignUpParams){
+    async signUp(userDetails: SignUpParams): Promise<void>{
         const { email } = userDetails;
         const result = await this.userRepository.findOneBy({ email });
         if(result){
@@ -77,7 +77,7 @@ export class AuthService {
         await this.userRepository.save(newUser);
     }
 
-    async findUserById(id: string){
+    async findUserById(id: string): Promise<User>{
         return await this.userRepository.findOneBy({ id });
     }
 }

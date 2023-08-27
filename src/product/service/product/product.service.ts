@@ -9,7 +9,7 @@ export class ProductService {
         @InjectRepository(Product) private productRepository: Repository<Product>,
     ) {}
 
-    async getProductList(){
+    async getProductList(): Promise<Product[]>{
         const getProducts =  this.productRepository
         .createQueryBuilder('product')
         .select('prod')
@@ -20,7 +20,7 @@ export class ProductService {
     }
 
     // temporary function
-    createProduct(prodcutDetails){
+    createProduct(prodcutDetails): Promise<Product[]>{
         const newProduct = this.productRepository.create({
             ...prodcutDetails
         });

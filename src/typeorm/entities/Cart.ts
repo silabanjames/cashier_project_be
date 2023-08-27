@@ -8,13 +8,7 @@ export class Cart{
     id: string;
 
     @Column()
-    bought_at: Date;
-
-    @Column()
     quantity: number;
-
-    @Column()
-    price: number;
 
     @ManyToOne(() => Product, (product)=>product.carts)
     product: Product;
