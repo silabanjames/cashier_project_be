@@ -6,10 +6,11 @@ import { User } from 'src/typeorm/entities/User';
 import { JwtModule } from '@nestjs/jwt';
 import { jwtConfig } from 'src/config/jwt.config';
 import { JwtStrategy } from './jwt.strategy';
+import { RefreshToken } from 'src/typeorm/entities/RefreshToken';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([User]), 
+    TypeOrmModule.forFeature([User, RefreshToken]), 
     JwtModule.register(jwtConfig),
   ],
   providers: [AuthService, JwtStrategy],

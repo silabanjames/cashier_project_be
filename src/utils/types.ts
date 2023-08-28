@@ -1,3 +1,5 @@
+import { IsNotEmpty } from "class-validator";
+
 export type SignInParams = {
     email: string;
     password: string;
@@ -35,3 +37,6 @@ export type UpdateProductParams = {
     stock: number;
 }
 
+export type RefreshTokenParams = {
+    refresh_token: string
+}
