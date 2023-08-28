@@ -9,7 +9,7 @@ export class ProductController {
     constructor(private readonly productService: ProductService) {}
 
     @Get()
-    getProductList(){
+    getProductList(): any{
         const product = this.productService.getProductList();
         return product;
         // return {

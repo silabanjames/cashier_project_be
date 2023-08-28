@@ -17,7 +17,7 @@ export class AdminService {
         return await this.productRepository.save(newProdcut);
     }
 
-    async getProduct(id: string): Promise<Product>{
+    async getProductDetails(id: string): Promise<Product>{
         const result = await this.productRepository.findOneBy({id});
         if(!result){
             throw new HttpException(
@@ -33,9 +33,18 @@ export class AdminService {
         if(result.affected == 0){
             throw new NotFoundException(`Product with id ${id} is not found`);
         }
+        return {
+            message: "Success to update product",
+        }
     }
 
     async deleteProduct(id: string): Promise<any>{
-        return await this.productRepository.delete({id});
+        const result =  await this.productRepository.delete({id});
+        if(result.affected == 0){
+            throw new NotFoundException(`Product with id ${id} is not found`);
+        }
+        return{
+            message: "Product has been deleted",
+        };
     }
 }

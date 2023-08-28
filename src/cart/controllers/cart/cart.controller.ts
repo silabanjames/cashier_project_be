@@ -1,5 +1,5 @@
 import { Body, Controller, Delete, Get, Param, Post, Req, UseGuards } from '@nestjs/common';
-import { GetUser } from 'src/auth/GetUser.decorator';
+import { GetUser } from 'src/decorators/GetUser.decorator';
 import { AddToCartDto } from 'src/cart/dtos/AddToCart.dto';
 import { CartService } from 'src/cart/services/cart/cart.service';
 import { JwtGuard } from 'src/guard/jwt.guard';
@@ -15,7 +15,7 @@ export class CartController {
     }
 
     @Post()
-    addToCart(@Body() itemCart: AddToCartDto, @GetUser() user): Promise<void>{
+    addToCart(@Body() itemCart: AddToCartDto, @GetUser() user): Promise<any>{
         return this.cartService.addToCart(user.id, itemCart);
     }
 

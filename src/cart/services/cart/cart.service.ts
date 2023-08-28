@@ -16,7 +16,7 @@ export class CartService {
         @InjectRepository(History) private readonly historyRepository: Repository<History>,
     ) {}
 
-    async addToCart(userId: string, cartItem: addToCartParams): Promise<void>{
+    async addToCart(userId: string, cartItem: addToCartParams): Promise<any>{
         // cek, apakah bisa masuk ke database jika productId diganti menjadi id saja
         const {productId, quantity} = cartItem;
         const product = await this.productRepository.createQueryBuilder('product')
@@ -37,6 +37,9 @@ export class CartService {
 
         try{
             await this.cartRepository.save(newCart);
+            return {
+                message: "Product added to cart"
+            };
         }
         catch(e){
             throw new InternalServerErrorException(e)
@@ -54,18 +57,27 @@ export class CartService {
                 HttpStatus.BAD_REQUEST,
             );
         }
-        return result;
+        return {
+            message: "Cart deleted"
+        };
 
     }
 
-    async itemTransaction(): Promise<void>{
+    async itemTransaction(): Promise<any>{
         // Pindahkan ke history
         const cart = await this.cartRepository.find();
-        const newHistory = this.historyRepository.create(cart);
+        const newHistory = this.historyRepository.create();
+        const date = new Date();
+        date.setTime(date.getHours());
+        newHistory.bought_at = date;
         await this.historyRepository.save(newHistory);
 
         // Hapus cart
         await this.cartRepository.clear();
+
+        return{
+            message: "Cart has been placed in history",
+        }
     }
 
     async getCart(){

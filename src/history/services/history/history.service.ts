@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { History } from 'src/typeorm/entities/History';
@@ -10,6 +10,11 @@ export class HistoryService {
     ){}
 
     async getHistory(){
-        return await this.historyRepository.find();
+        try{
+            return await this.historyRepository.find();
+        }
+        catch(e){
+            throw new InternalServerErrorException(e);
+        }
     }
 }

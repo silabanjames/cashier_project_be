@@ -8,14 +8,21 @@ export class AuthController {
     constructor(private authService: AuthService) {}
 
     @Get('sign-in')
-    // @HttpCode(200)
     signIn(@Body() signInDto: SignInDto): Promise<{ access_token: string }>{
         return this.authService.signIn(signInDto);
     }
 
     @Post('sign-up')
-    // @HttpCode(200)
-    signUp(@Body() signUpDto: SignUpDto): Promise<void>{
-        return this.authService.signUp(signUpDto);
+    signUp(@Body() signUpDto: SignUpDto): any{
+        return this.authService.signUp(signUpDto)
+    }
+
+    // Temporary Function
+    @Post('admin')
+    createAdmin(@Body() adminDetails: SignUpDto): any{
+        this.authService.createAdmin(adminDetails);
+        return {
+            message: 'Success, user created',
+        };
     }
 }

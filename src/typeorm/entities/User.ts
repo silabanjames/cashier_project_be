@@ -20,7 +20,7 @@ export class User {
     salt: string;
 
     @Column()
-    role: boolean;
+    role: string;
 
     @OneToMany(()=> History, (history)=>history.user)
     histories: History[];

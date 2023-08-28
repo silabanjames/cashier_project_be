@@ -17,6 +17,9 @@ export class ProductService {
         .getMany();
 
         return getProducts;
+        // return {
+        //     data: getProducts
+        // };
     }
 
     // temporary function
