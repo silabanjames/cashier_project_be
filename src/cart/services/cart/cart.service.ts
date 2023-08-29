@@ -1,4 +1,4 @@
-import { HttpException, HttpStatus, Injectable, InternalServerErrorException } from '@nestjs/common';
+import { BadRequestException, HttpException, HttpStatus, Injectable, InternalServerErrorException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Cart } from 'src/typeorm/entities/Cart';
 import { Product } from 'src/typeorm/entities/Product';
@@ -28,6 +28,11 @@ export class CartService {
                     .select('user')
                     .where("id = :id", { id: userId })
                     .getOne();
+
+        // jika quantity yang mau dibeli lebih banyak dari stock
+        if (product.stock < cartItem.quantity){
+            throw new BadRequestException("Stock product tidak mencukupi");
+        }
 
         const newCart = this.cartRepository.create({
             quantity,
@@ -65,18 +70,27 @@ export class CartService {
 
     async itemTransaction(): Promise<any>{
         // Pindahkan ke history
-        const cart = await this.cartRepository.find();
+        const cart = await this.cartRepository.find({relations: ['product']});
         const newHistory = this.historyRepository.create();
         const date = new Date();
         date.setTime(date.getHours());
         newHistory.bought_at = date;
         await this.historyRepository.save(newHistory);
 
+        console.log(cart);
+
+        // Kurangi stock Product
+        for(let item of cart){
+            const spesificProduct = await this.productRepository.findOneBy({id: item.product.id});
+            spesificProduct.stock -= item.quantity;
+            this.productRepository.save(spesificProduct);
+        }
+
         // Hapus cart
         await this.cartRepository.clear();
 
         return{
-            message: "Cart has been placed in history",
+            message: "Transaction success",
         }
     }
 

@@ -10,11 +10,14 @@ export class AdminService {
         @InjectRepository(Product) private readonly productRepository: Repository<Product>
     ){}
 
-    async createProduct(productDetails: CreateProductParams): Promise<Product>{
+    async createProduct(productDetails: CreateProductParams): Promise<any>{
         const newProdcut = this.productRepository.create({
             ...productDetails
         });
-        return await this.productRepository.save(newProdcut);
+        await this.productRepository.save(newProdcut);
+        return {
+            message: "Success to create product"
+        }
     }
 
     async getProductDetails(id: string): Promise<Product>{
