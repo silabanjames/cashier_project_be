@@ -9,9 +9,12 @@ export class HistoryService {
         @InjectRepository(History) private readonly historyRepository: Repository<History>,
     ){}
 
-    async getHistory(){
+    async getHistory(): Promise<{data:History[]}>{
         try{
-            return await this.historyRepository.find();
+            const history = await this.historyRepository.find();
+            return{
+                data: history,
+            }
         }
         catch(e){
             throw new InternalServerErrorException(e);

@@ -20,7 +20,7 @@ export class AdminController {
     }
 
     @Get(':id')
-    getProductDetails(@Param('id', UUIDValidationPipe) id:string): Promise<Product>{
+    getProductDetails(@Param('id', UUIDValidationPipe) id:string): Promise<{data: Product}>{
         return this.adminService.getProductDetails(id);
     }
 

@@ -3,6 +3,7 @@ import { GetUser } from 'src/decorators/GetUser.decorator';
 import { AddToCartDto } from 'src/cart/dtos/AddToCart.dto';
 import { CartService } from 'src/cart/services/cart/cart.service';
 import { JwtGuard } from 'src/guard/jwt.guard';
+import { Cart } from 'src/typeorm/entities/Cart';
 
 @Controller('cart')
 @UseGuards(JwtGuard)
@@ -10,7 +11,7 @@ export class CartController {
     constructor(private readonly cartService: CartService) {}
 
     @Get()
-    getCart(){
+    getCart(): Promise<{data: Cart[]}>{
         return this.cartService.getCart();
     }
 

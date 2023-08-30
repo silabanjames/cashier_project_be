@@ -20,7 +20,7 @@ export class AdminService {
         }
     }
 
-    async getProductDetails(id: string): Promise<Product>{
+    async getProductDetails(id: string): Promise<{data:Product}>{
         const result = await this.productRepository.findOneBy({id});
         if(!result){
             throw new HttpException(
@@ -28,7 +28,9 @@ export class AdminService {
                 HttpStatus.BAD_REQUEST,
             );
         }
-        return result;
+        return{
+            data: result
+        };
     }
 
     async updateProduct(id: string, productDetails: UpdateProductParams): Promise<any>{

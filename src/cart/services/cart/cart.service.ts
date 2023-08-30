@@ -23,6 +23,8 @@ export class CartService {
                         .select('product')
                         .where("id = :id", { id: productId })
                         .getOne();
+        
+        // select * from product
 
         const user = await this.userRepository.createQueryBuilder('user')
                     .select('user')
@@ -30,7 +32,7 @@ export class CartService {
                     .getOne();
 
         // jika quantity yang mau dibeli lebih banyak dari stock
-        if (product.stock < cartItem.quantity){
+        if (!product || product.stock < cartItem.quantity){
             throw new BadRequestException("Stock product tidak mencukupi");
         }
 
@@ -38,7 +40,7 @@ export class CartService {
             quantity,
             product,
             user
-        })
+        });
 
         try{
             await this.cartRepository.save(newCart);
@@ -47,7 +49,7 @@ export class CartService {
             };
         }
         catch(e){
-            throw new InternalServerErrorException(e)
+            throw new InternalServerErrorException(e);
         }
 
     }
@@ -71,19 +73,20 @@ export class CartService {
     async itemTransaction(): Promise<any>{
         // Pindahkan ke history
         const cart = await this.cartRepository.find({relations: ['product']});
-        const newHistory = this.historyRepository.create();
-        const date = new Date();
-        date.setTime(date.getHours());
-        newHistory.bought_at = date;
-        await this.historyRepository.save(newHistory);
 
-        console.log(cart);
-
-        // Kurangi stock Product
         for(let item of cart){
+            // Pindahkan ke History
+            const newHistory = this.historyRepository.create();
+            const date = new Date();
+            date.setTime(date.getHours());
+            newHistory.bought_at = date;
+            newHistory.quantity = item.quantity;
+            await this.historyRepository.save(newHistory);
+
+            // Kurangi Stock Produk
             const spesificProduct = await this.productRepository.findOneBy({id: item.product.id});
             spesificProduct.stock -= item.quantity;
-            this.productRepository.save(spesificProduct);
+            await this.productRepository.save(spesificProduct);
         }
 
         // Hapus cart
@@ -94,7 +97,10 @@ export class CartService {
         }
     }
 
-    async getCart(){
-        return await this.cartRepository.find();
+    async getCart(): Promise<{data: Cart[]}>{
+        const cartItems = await this.cartRepository.find();
+        return{
+            data: cartItems,
+        }
     }
 }

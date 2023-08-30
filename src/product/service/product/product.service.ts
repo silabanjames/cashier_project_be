@@ -9,17 +9,18 @@ export class ProductService {
         @InjectRepository(Product) private productRepository: Repository<Product>,
     ) {}
 
-    async getProductList(): Promise<Product[]>{
-        const getProducts =  this.productRepository
+    async getProductList(): Promise<{data: Product[]}>{
+        const getProducts =  await this.productRepository
         .createQueryBuilder('product')
         .select('prod')
         .from(Product, 'prod')
         .getMany();
 
-        return getProducts;
-        // return {
-        //     data: getProducts
-        // };
+        // console.log(getProducts);
+        // return getProducts;
+        return {
+            data: getProducts
+        };
     }
 
     // temporary function
