@@ -16,7 +16,7 @@ export class CartService {
         @InjectRepository(History) private readonly historyRepository: Repository<History>,
     ) {}
 
-    async addToCart(userId: string, cartItem: addToCartParams): Promise<any>{
+    async addToCart(cartItem: addToCartParams, userId: string): Promise<any>{
         // cek, apakah bisa masuk ke database jika productId diganti menjadi id saja
         const {productId, quantity} = cartItem;
         const product = await this.productRepository.createQueryBuilder('product')
@@ -58,6 +58,7 @@ export class CartService {
         // check if id cart is not found in data
 
         const result = await this.cartRepository.delete(id);
+        console.log(result)
         if(result.affected === 0){
             throw new HttpException(
                 'Pilih produk yang ingin dihapus',
@@ -70,17 +71,22 @@ export class CartService {
 
     }
 
-    async itemTransaction(): Promise<any>{
+    async itemTransaction(user: User): Promise<any>{
         // Pindahkan ke history
         const cart = await this.cartRepository.find({relations: ['product']});
 
         for(let item of cart){
+            const {product} = item
+
             // Pindahkan ke History
             const newHistory = this.historyRepository.create();
             const date = new Date();
-            date.setTime(date.getHours());
+            // date.setTime(date.getHours());
+            console.log(date)
             newHistory.bought_at = date;
             newHistory.quantity = item.quantity;
+            newHistory.product = product
+            newHistory.user = user
             await this.historyRepository.save(newHistory);
 
             // Kurangi Stock Produk
@@ -98,7 +104,7 @@ export class CartService {
     }
 
     async getCart(): Promise<{data: Cart[]}>{
-        const cartItems = await this.cartRepository.find();
+        const cartItems = await this.cartRepository.find({relations: ['product']});
         return{
             data: cartItems,
         }

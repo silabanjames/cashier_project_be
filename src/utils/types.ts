@@ -18,7 +18,7 @@ export type addToCartParams = {
 }
 
 export type CreateProductParams = {
-    image: string;
+    // image: string;
     
     title: string;
 

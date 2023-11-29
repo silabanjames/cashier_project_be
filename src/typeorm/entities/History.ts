@@ -13,7 +13,7 @@ export class History {
     @Column()
     quantity: number;
 
-    @ManyToOne(() => Product, (product)=>product.histories)
+    @ManyToOne(() => Product, (product)=>product.histories,  { onDelete: 'CASCADE' })
     product: Product;
 
     @ManyToOne(() => User, (user)=>user.histories)

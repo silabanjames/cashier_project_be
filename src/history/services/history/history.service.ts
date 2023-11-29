@@ -9,9 +9,9 @@ export class HistoryService {
         @InjectRepository(History) private readonly historyRepository: Repository<History>,
     ){}
 
-    async getHistory(): Promise<{data:History[]}>{
+    async getHistory(): Promise<{data: History[]}>{
         try{
-            const history = await this.historyRepository.find();
+            const history = await this.historyRepository.find({relations: ['product']});
             return{
                 data: history,
             }

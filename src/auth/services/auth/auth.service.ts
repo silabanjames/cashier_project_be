@@ -38,8 +38,15 @@ export class AuthService {
 
         const access_token = await this.createAccessToken(searchUser);
         const refresh_token = await this.createRefreshToken(searchUser)
+        const user_information = {
+            name: searchUser.name,
+            email: searchUser.email,
+            role: searchUser.role
+        }
 
-        return {access_token, refresh_token};
+        return {
+            access_token, refresh_token, user_information
+        };
     }
 
     async signUp(userDetails: SignUpParams): Promise<any>{

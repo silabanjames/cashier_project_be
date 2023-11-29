@@ -2,6 +2,7 @@ import { Body, Controller, Get, HttpCode, Param, Post, Put } from '@nestjs/commo
 import { refreshTokenDto } from 'src/auth/dtos/RefreshToken.dto';
 import { SignInDto } from 'src/auth/dtos/SignIn.dto';
 import { SignUpDto } from 'src/auth/dtos/SignUp.dto';
+import { LoginResponse } from 'src/auth/interface/LoginResponse.interface';
 import { AuthService } from 'src/auth/services/auth/auth.service';
 import { RefreshToken } from 'src/typeorm/entities/RefreshToken';
 
@@ -9,8 +10,8 @@ import { RefreshToken } from 'src/typeorm/entities/RefreshToken';
 export class AuthController {
     constructor(private authService: AuthService) {}
 
-    @Get('sign-in')
-    signIn(@Body() signInDto: SignInDto): Promise<{ access_token: string }>{
+    @Post('sign-in')
+    signIn(@Body() signInDto: SignInDto): Promise<LoginResponse>{
         return this.authService.signIn(signInDto);
     }
 

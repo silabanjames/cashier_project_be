@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Product } from 'src/typeorm/entities/Product';
 import { Repository } from 'typeorm';
+// import { StaticFileService } from '@nestjs/platform-express';
 
 @Injectable()
 export class ProductService {
@@ -22,6 +23,10 @@ export class ProductService {
             data: getProducts
         };
     }
+
+    // async findProductImage(filename: string){
+    //     const iamge = await this.
+    // }
 
     // temporary function
     createProduct(prodcutDetails): Promise<Product[]>{

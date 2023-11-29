@@ -4,6 +4,7 @@ import { AddToCartDto } from 'src/cart/dtos/AddToCart.dto';
 import { CartService } from 'src/cart/services/cart/cart.service';
 import { JwtGuard } from 'src/guard/jwt.guard';
 import { Cart } from 'src/typeorm/entities/Cart';
+import { User } from 'src/typeorm/entities/User';
 
 @Controller('cart')
 @UseGuards(JwtGuard)
@@ -17,7 +18,8 @@ export class CartController {
 
     @Post()
     addToCart(@Body() itemCart: AddToCartDto, @GetUser() user): Promise<any>{
-        return this.cartService.addToCart(user.id, itemCart);
+        console.log(user)
+        return this.cartService.addToCart(itemCart, user.id);
     }
 
     @Delete(':id')
@@ -27,8 +29,8 @@ export class CartController {
     }
 
     @Post('transaction')
-    itemTransaction():Promise<void>{
-        return this.cartService.itemTransaction();
+    itemTransaction(@GetUser() user: User):Promise<void>{
+        return this.cartService.itemTransaction(user);
     }
 
 }
