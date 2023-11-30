@@ -3,6 +3,8 @@ import { ProductService } from 'src/product/service/product/product.service';
 import Response from 'express';
 import { JwtGuard } from 'src/guard/jwt.guard';
 import { Product } from 'src/typeorm/entities/Product';
+import { User } from 'src/typeorm/entities/User';
+import { GetUser } from 'src/decorators/GetUser.decorator';
 
 @Controller('product')
 @UseGuards(JwtGuard)
@@ -10,8 +12,8 @@ export class ProductController {
     constructor(private readonly productService: ProductService) {}
 
     @Get()
-    getProductList(): Promise<{data: Product[]}>{
-        const product = this.productService.getProductList();
+    getProductList(@GetUser() user: User): Promise<{data: Product[]}>{
+        const product = this.productService.getProductList(user.id);
         return product;
     }
 

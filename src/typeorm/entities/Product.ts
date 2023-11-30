@@ -24,4 +24,5 @@ export class Product{
 
     @OneToMany(()=> Cart, (cart)=>cart.product)
     carts: Cart[];
+    inCart: boolean;
 }

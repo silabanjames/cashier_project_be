@@ -12,20 +12,25 @@ export class CartController {
     constructor(private readonly cartService: CartService) {}
 
     @Get()
-    getCart(): Promise<{data: Cart[]}>{
-        return this.cartService.getCart();
+    getCart(@GetUser() user: User): Promise<{data: Cart[]}>{
+        return this.cartService.getCart(user.id);
     }
 
     @Post()
     addToCart(@Body() itemCart: AddToCartDto, @GetUser() user): Promise<any>{
-        console.log(user)
+        // console.log(user)
         return this.cartService.addToCart(itemCart, user.id);
     }
 
     @Delete(':id')
     deleteCartItem( @Param('id') id: string ): Promise<any>{
-        console.log(id)
+        // console.log(id)
         return this.cartService.deleteCartItem(id);
+    }
+
+    @Delete("/product/:id")
+    deleteCartWithProductId(@Param('id') id: string): Promise<any>{
+        return this.cartService.deleteCartWithProductId(id);
     }
 
     @Post('transaction')

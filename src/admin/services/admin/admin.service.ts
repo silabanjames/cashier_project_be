@@ -76,12 +76,26 @@ export class AdminService {
     }
 
     async deleteProduct(id: string): Promise<any>{
-        const result =  await this.productRepository.delete({id});
-        if(result.affected == 0){
-            throw new NotFoundException(`Product with id ${id} is not found`);
+        try{
+            const product = await this.getProductDetails(id)
+            await fs.unlink(`.${product.data.image.replace(`${process.env.URL}:${process.env.PORT}`, '')}`, (err) => {
+                if(err){
+                    console.error(err);
+                    return err
+                }
+            })
+            const result =  await this.productRepository.delete({id});
+            if(result.affected == 0){
+                throw new NotFoundException(`Product with id ${id} is not found`);
+            }
+            return{
+                message: "Product has been deleted",
+            };
         }
-        return{
-            message: "Product has been deleted",
-        };
+        catch(err){
+            return {
+                error: err
+            }
+        }
     }
 }

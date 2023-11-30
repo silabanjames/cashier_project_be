@@ -36,6 +36,11 @@ export class CartService {
             throw new BadRequestException("Stock product tidak mencukupi");
         }
 
+        // Change inCart value
+        // const id = productId
+        // const inCart = true
+        // await this.productRepository.update({id}, {inCart});
+
         const newCart = this.cartRepository.create({
             quantity,
             product,
@@ -55,10 +60,7 @@ export class CartService {
     }
 
     async deleteCartItem(id: string): Promise<any>{
-        // check if id cart is not found in data
-
         const result = await this.cartRepository.delete(id);
-        console.log(result)
         if(result.affected === 0){
             throw new HttpException(
                 'Pilih produk yang ingin dihapus',
@@ -71,9 +73,30 @@ export class CartService {
 
     }
 
+    async deleteCartWithProductId(id: string): Promise<any>{
+        const result = await this.cartRepository.createQueryBuilder('cart')
+                        .delete()
+                        .from('cart')
+                        .where("product.id = :id", {id: id})
+                        .execute()
+        if(result.affected === 0){
+            throw new HttpException(
+                'Pilih produk yang ingin dihapus',
+                HttpStatus.BAD_REQUEST,
+            );
+        }
+        return {
+            message: "Cart deleted"
+        };
+    }
+
     async itemTransaction(user: User): Promise<any>{
         // Pindahkan ke history
-        const cart = await this.cartRepository.find({relations: ['product']});
+        const cart = await this.cartRepository.createQueryBuilder("cart")
+                        .leftJoinAndSelect('cart.user', 'users')
+                        .leftJoinAndSelect('cart.product', 'products')
+                        .where('users.id = :id', {id: user.id})
+                        .getMany()
 
         for(let item of cart){
             const {product} = item
@@ -96,15 +119,29 @@ export class CartService {
         }
 
         // Hapus cart
-        await this.cartRepository.clear();
+        await this.cartRepository.createQueryBuilder('cart')
+                .delete()
+                .from(Cart)
+                .where("user.id = :id", {id: user.id})
+                .execute()
 
         return{
             message: "Transaction success",
         }
     }
 
-    async getCart(): Promise<{data: Cart[]}>{
-        const cartItems = await this.cartRepository.find({relations: ['product']});
+    async getCart(id: string): Promise<{data: Cart[]}>{
+        // let cartItems = await this.cartRepository.find({
+        //     relations: ['product', 'user'],
+        //     where: {
+        //         user.id: id
+        //     }
+        // });
+        const cartItems = await this.cartRepository.createQueryBuilder("cart")
+                            .leftJoinAndSelect('cart.user', 'users')
+                            .leftJoinAndSelect('cart.product', 'products')
+                            .where('users.id = :id', {id: id})
+                            .getMany()
         return{
             data: cartItems,
         }
